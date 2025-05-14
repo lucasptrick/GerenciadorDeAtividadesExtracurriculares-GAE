@@ -11,11 +11,9 @@ O **GAE-Hub** é um sistema web completo voltado para o gerenciamento de ativida
 - Integração com API RESTful desenvolvida em NestJS
 - Painel administrativo com tabelas, pop-ups e botões de ação
 
-## 🖼️ Demonstração
+## 🖼️ Review do Sistema
 
-> Aqui você pode adicionar imagens ou GIFs demonstrando a interface da aplicação.
-> Exemplo:
-> ![Dashboard do Senses](./public/demo-dashboard.png)
+> ![Review do Sistema](./GAE-HUB-Review.gif)
 
 ## 🛠️ Tecnologias Utilizadas
 

@@ -1,20 +1,42 @@
-import Link from "next/link";
-import Image from "next/image";
-import { BiLogIn } from "react-icons/bi";
+'use client'
+
+import Link from "next/link"
+import Image from "next/image"
+import toast from "react-hot-toast"
+import { BiLogIn } from "react-icons/bi"
+import { useState } from "react"
+import { useAuth } from "@/context/AuthContext"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
+  const { login } = useAuth()
+  const router = useRouter()
+
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+
+    const success = await login({ email, password })
+    if (success) {
+      toast.success("Login realizado com sucesso!")
+      router.push("/dashboard") 
+    } else {
+      toast.error("Credenciais inválidas!")
+      // setError("E-mail ou senha inválidos")
+    }
+  }
+
   return (
     <main
       className="relative flex flex-col items-center justify-center min-h-screen bg-cover bg-bottom px-4"
       style={{ backgroundImage: "url('/bg.png')" }}
     >
-      {/* Div maior com classe personalizada */}
       <div className="container-home1 mb-6 bg-white bg-opacity-90 shadow-lg rounded-2xl p-8 w-full max-w-lg">
-        
-        {/* Div interna com classe personalizada */}
         <section className="container-home2 flex flex-col items-center">
-          
-          {/* Logo com Link para a página inicial */}
           <Link href="/">
             <figure className="cursor-pointer hover:opacity-80 transition-all">
               <Image
@@ -27,10 +49,8 @@ export default function LoginPage() {
             </figure>
           </Link>
 
-
-          {/* Formulário de login */}
           <article className="w-full">
-            <form className="flex flex-col gap-4">
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   E-mail
@@ -40,7 +60,9 @@ export default function LoginPage() {
                   id="email"
                   name="email"
                   required
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-gray-500"
                 />
               </div>
 
@@ -53,9 +75,15 @@ export default function LoginPage() {
                   id="password"
                   name="password"
                   required
-                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-gray-500"
                 />
               </div>
+
+              {error && (
+                <p className="text-red-600 text-sm text-center">{error}</p>
+              )}
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
@@ -86,5 +114,5 @@ export default function LoginPage() {
         </section>
       </div>
     </main>
-  );
+  )
 }

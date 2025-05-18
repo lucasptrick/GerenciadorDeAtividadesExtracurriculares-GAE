@@ -9,7 +9,7 @@ export default function Home() {
       style={{ backgroundImage: "url('/bg.png')" }}
     >
       {/* Navbar/Header */}
-      <header className="w-full bg-white/10 backdrop-blur-md shadow-md py-4 px-6 flex flex-col items-center sm:flex-row sm:justify-between">
+      <header className="w-full bg-white/80 backdrop-blur-md shadow-md py-4 px-6 flex flex-col items-center sm:flex-row sm:justify-between">
         {/* Logo + Título */}
         <div className="flex items-center space-x-4">
           <img src="/GAE-Icon.png" alt="Ícone HUOC" className="h-10" />

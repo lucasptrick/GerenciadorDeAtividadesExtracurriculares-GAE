@@ -35,7 +35,7 @@ export default function LoginPage() {
       className="relative flex flex-col items-center justify-center min-h-screen bg-cover bg-bottom px-4"
       style={{ backgroundImage: "url('/bg.png')" }}
     >
-      <div className="container-home1 mb-6 bg-white bg-opacity-90 shadow-lg rounded-2xl p-8 w-full max-w-lg">
+      <div className="container-home1 mb-6 bg-white/80 shadow-lg rounded-2xl p-8 w-full max-w-lg">
         <section className="container-home2 flex flex-col items-center">
           <Link href="/">
             <figure className="cursor-pointer hover:opacity-80 transition-all">

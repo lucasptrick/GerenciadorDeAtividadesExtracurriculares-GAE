@@ -11,10 +11,11 @@ interface Activity {
   id: number
   atividadeRealizada: string
   categoriaAtividade: string
-  cargaHoraria: number
-  semestre: number
   certificadoURL: string
+  semestre: string
+  cargaHoraria: number
 }
+
 
 export default function ActivitiesPage() {
   const [activities, setActivities] = useState<Activity[]>([])
@@ -25,7 +26,7 @@ export default function ActivitiesPage() {
     atividadeRealizada: '',
     categoriaAtividade: '',
     cargaHoraria: 0,
-    semestre: 2022.2,
+    semestre: "2022.2",
     certificadoURL: '',
 })
   const [isCreating, setIsCreating] = useState(false)
@@ -106,7 +107,7 @@ export default function ActivitiesPage() {
         atividadeRealizada: '',
         categoriaAtividade: '',
         cargaHoraria: 0,
-        semestre: 2024.1, // Deixe o valor inicial como número
+        semestre: "2024.1", // Deixe o valor inicial como número
         certificadoURL: '',
         });
         fetchActivities();
@@ -118,20 +119,26 @@ export default function ActivitiesPage() {
 
   return (
     <PrivateRoute>
+      <main className="min-h-screen bg-gradient-to-br from-cyan-100 via-white to-cyan-50 p-6"
+      style={{ backgroundImage: "url('/bg.png')" }}
+      >
+        
+        <div className="max-w-4xl mx-auto bg-white/80 shadow-xl rounded-2xl p-8">
+
       <div className="p-6 ">
         <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Minhas Atividades</h1>
+            <h1 className="text-2xl font-bold text-cyan-800">Minhas Atividades</h1>
 
             <div className='flex gap-4'>
                 <button
                     onClick={() => setIsCreating(true)}
-                    className="bg-green-500 text-white px-4 py-2 rounded font-semibold hover:bg-green-700">
+                    className="bg-cyan-600 text-white px-4 py-2 rounded font-semibold hover:bg-cyan-800">
                     <i className="bi bi-clipboard-plus-fill"></i> Adicionar Atividade
                 </button>
 
                 <button
                     onClick={() => router.back()}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700">
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
                     <i className="bi bi-arrow-left-circle-fill"></i> Voltar
                 </button>
             </div>
@@ -140,16 +147,16 @@ export default function ActivitiesPage() {
 
 
         <div className="overflow-x-auto">
-          <table className="min-w-full border divide-y divide-gray-200 shadow rounded-2xl">
-            <thead className="bg-green-600 text-white">
-              <tr>
-                <th className="px-4 py-2 text-left">ID</th>
-                <th className="px-4 py-2 text-left">Atividade Realizada</th>
-                <th className="px-4 py-2 text-left">Categoria</th>
-                <th className="px-4 py-2 text-left">Carga Horária</th>
-                <th className="px-4 py-2 text-left">Semestre</th>
-                <th className="px-4 py-2 text-left">Certificado</th>
-                <th className="px-4 py-2 text-left"></th>
+          <table className="min-w-full border divide-y divide-gray-200 shadow rounded-3xl">
+            <thead className="bg-cyan-700 text-white">
+              <tr className='text-center'>
+                <th className="px-4 py-2 ">ID</th>
+                <th className="px-4 py-2 ">Atividade Realizada</th>
+                <th className="px-4 py-2 ">Categoria</th>
+                <th className="px-4 py-2 ">Carga Horária</th>
+                <th className="px-4 py-2 ">Semestre</th>
+                <th className="px-4 py-2 ">Certificado</th>
+                <th className="px-4 py-2 "></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100 bg-white">
@@ -166,7 +173,7 @@ export default function ActivitiesPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-cyan-600 hover:underline"
-                    >
+                      >
                       Ver Certificado
                     </a>
                   </td>
@@ -178,7 +185,7 @@ export default function ActivitiesPage() {
                         setIsOpen(true)
                       }}
                       className="bg-cyan-600 text-white px-1 py-1 rounded hover:bg-cyan-800 transition"
-                    >
+                      >
                       <BiDotsVerticalRounded size={28} />
                     </button>
                   </td>
@@ -194,7 +201,7 @@ export default function ActivitiesPage() {
             <div className="fixed inset-0 flex items-center justify-center p-4">
                 <Dialog.Panel className="relative w-full max-w-md bg-white rounded-xl shadow-lg p-6">
                 
-                <Dialog.Title className="text-xl font-bold text-green-600 mb-4">
+                <Dialog.Title className="text-xl font-bold text-cyan-800 mb-4">
                     Nova Atividade
                 </Dialog.Title>
                 <div className="space-y-2 text-black">
@@ -205,7 +212,7 @@ export default function ActivitiesPage() {
                         className="w-full p-2 border rounded"
                         value={newActivity.atividadeRealizada}
                         onChange={(e) => handleNewChange('atividadeRealizada', e.target.value)}
-                    />
+                        />
                     </label>
                     <label className="block">
                     <span className="text-sm font-medium">Categoria</span>
@@ -214,7 +221,7 @@ export default function ActivitiesPage() {
                         className="w-full p-2 border rounded"
                         value={newActivity.categoriaAtividade}
                         onChange={(e) => handleNewChange('categoriaAtividade', e.target.value)}
-                    />
+                        />
                     </label>
                     <label className="block">
                     <span className="text-sm font-medium">Carga Horária</span>
@@ -223,7 +230,7 @@ export default function ActivitiesPage() {
                         className="w-full p-2 border rounded"
                         value={newActivity.cargaHoraria}
                         onChange={(e) => handleNewChange('cargaHoraria', Number(e.target.value))}
-                    />
+                        />
                     </label>
                     <label className="block">
                     <span className="text-sm font-medium">Semestre</span>
@@ -232,7 +239,7 @@ export default function ActivitiesPage() {
                         className="w-full p-2 border rounded"
                         value={newActivity.semestre}
                         onChange={(e) => handleNewChange('semestre', e.target.value)}
-                    />
+                        />
                     </label>
                     <label className="block">
                     <span className="text-sm font-medium">URL do Certificado</span>
@@ -241,13 +248,13 @@ export default function ActivitiesPage() {
                         className="w-full p-2 border rounded"
                         value={newActivity.certificadoURL}
                         onChange={(e) => handleNewChange('certificadoURL', e.target.value)}
-                    />
+                        />
                     </label>
                 </div>
                 <div className="flex justify-end gap-4 mt-6">
                     <button
                     onClick={handleCreate}
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                    className="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-800"
                     >
                     Criar
                     </button>
@@ -274,7 +281,7 @@ export default function ActivitiesPage() {
                 onClick={() => setIsOpen(false)}
                 className="absolute top-3 right-3 text-red-300 hover:text-red-600 text-3xl font-bold"
                 aria-label="Fechar"
-            >
+                >
                 &times;
             </button>
 
@@ -296,7 +303,7 @@ export default function ActivitiesPage() {
                       onChange={(e) =>
                         handleChange('atividadeRealizada', e.target.value)
                       }
-                    />
+                      />
                   </label>
 
                   <label className="block">
@@ -309,7 +316,7 @@ export default function ActivitiesPage() {
                       onChange={(e) =>
                         handleChange('categoriaAtividade', e.target.value)
                       }
-                    />
+                      />
                   </label>
 
                   <label className="block">
@@ -322,7 +329,7 @@ export default function ActivitiesPage() {
                       onChange={(e) =>
                         handleChange('cargaHoraria', Number(e.target.value))
                       }
-                    />
+                      />
                   </label>
 
                   <label className="block">
@@ -335,7 +342,7 @@ export default function ActivitiesPage() {
                       onChange={(e) =>
                         handleChange('semestre', Number(e.target.value))
                       }
-                    />
+                      />
                   </label>
 
                   <label className="block">
@@ -348,7 +355,7 @@ export default function ActivitiesPage() {
                       onChange={(e) =>
                         handleChange('certificadoURL', e.target.value)
                       }
-                    />
+                      />
                   </label>
                 </div>
               )}
@@ -358,14 +365,14 @@ export default function ActivitiesPage() {
                   <>
                     <button
                       onClick={handleUpdate}
-                      className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                    >
+                      className="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700"
+                      >
                       Salvar Alterações
                     </button>
                     <button
                       onClick={() => setIsEditing(false)}
-                      className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
-                    >
+                      className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                      >
                       Cancelar
                     </button>
                   </>
@@ -373,14 +380,14 @@ export default function ActivitiesPage() {
                   <>
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-                    >
+                      className="bg-cyan-600 text-white px-4 py-2 rounded hover:bg-cyan-700"
+                      >
                       Editar
                     </button>
                     <button
                       onClick={() => selectedActivity && handleDelete(selectedActivity.id)}
                       className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                    >
+                      >
                       Apagar
                     </button>
                   </>
@@ -389,7 +396,9 @@ export default function ActivitiesPage() {
             </Dialog.Panel>
           </div>
         </Dialog>
-      </div>
+        </div>
+        </div>
+      </main>      
     </PrivateRoute>
   )
 }

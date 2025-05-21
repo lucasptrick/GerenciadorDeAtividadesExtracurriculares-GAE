@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext'
 import Link from 'next/link'
 import axios from 'axios'
 
+
 interface Activity {
   id: number
   atividadeRealizada: string
@@ -25,24 +26,26 @@ export default function DashboardPage() {
   const [resumoSemestral, setResumoSemestral] = useState<Resumo[]>([])
   const [selectedSemester, setSelectedSemester] = useState<string | null>(null)
   const [filteredActivities, setFilteredActivities] = useState<Activity[]>([])
-  const [allActivities, setAllActivities] = useState<Activity[]>([])
+  const [, setAllActivities] = useState<Activity[]>([])
+  const [totalHoras, setTotalHoras] = useState<number>(0)
+
 
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const token = localStorage.getItem('token')
-        if (!token) {
-          console.error('Token não encontrado')
-          return
-        }
+        // const token = localStorage.getItem('token')
+        // if (!token) {
+        //   console.error('Token não encontrado')
+        //   return
+        // }
 
         const response = await axios.get('http://localhost:3000/activities', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+         withCredentials: true,
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
         })
 
-        console.log('Dados recebidos da API:', response.data)
         const activities: Activity[] = response.data
         setAllActivities(activities)
 
@@ -73,17 +76,24 @@ export default function DashboardPage() {
     }
   }, [user])
 
+  useEffect(() => {
+    const total = resumoSemestral.reduce((acc, item) => acc + item.horas, 0)
+    setTotalHoras(total)
+  }, [resumoSemestral])
+
+
 
   // FALTA CORRIGIR!!! 
   const openModal = async (semestre: string) => {
-    const token = localStorage.getItem('token')
-        if (!token) {
-          console.error('Token não encontrado')
-          return
-        }
+    // const token = localStorage.getItem('token')
+    //     if (!token) {
+    //       console.error('Token não encontrado')
+    //       return
+    //     }
     
     const response = await axios.get(`http://localhost:3000/activities/semestre/${semestre}`, {
-      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
+      // headers: { Authorization: `Bearer ${token}` },
 })
 setFilteredActivities(response.data)
 setSelectedSemester(semestre)
@@ -101,7 +111,9 @@ setSelectedSemester(semestre)
               <h1 className="text-2xl font-bold text-cyan-800">
                 Olá, {user?.nome || 'Estudante'}
               </h1>
-              <p className="text-gray-600 text-sm">Matrícula: {user?.matricula}</p>
+              <p className="text-gray-600 text-sm"> Matrícula:{' '}
+                <span className="text-cyan-800 text-body">{user?.matricula}</span>
+              </p>
             </div>
 
             <div className="text-center flex gap-2">
@@ -121,36 +133,42 @@ setSelectedSemester(semestre)
           </header>
 
           <section className="mb-8">
-            <h2 className="text-lg font-semibold text-cyan-700 mb-4">Resumo de Horas por Semestre</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <h2 className="text-center text-xl font-semibold text-cyan-700">Resumo de Horas por Semestre</h2>
+            <hr className="border-1 border-cyan-700" />
+
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
               {resumoSemestral.length === 0 ? (
-                <div className="text-center text-gray-500 col-span-full">Nenhuma atividade registrada para exibir</div>
+                  <div className="text-center text-gray-500 col-span-full">Nenhuma atividade registrada para
+                    exibir</div>
               ) : (
-                resumoSemestral.map(({ semestre, horas }) => (
-                  <div
-                    key={semestre}
-                    onClick={() => openModal(semestre)}
-                    className="cursor-pointer bg-[#dff5c5] p-4 rounded-xl shadow hover:shadow-md transition"
-                  >
-                    <h3 className="text-cyan-800 font-medium text-lg">{semestre}</h3>
-                    <p className="text-gray-700 text-sm">Horas acumuladas:</p>
-                    <span className="text-xl font-bold text-cyan-900">{horas}h</span>
-                  </div>
-                ))
+                  resumoSemestral.map(({semestre, horas}) => (
+                      <div
+                          key={semestre}
+                          onClick={() => openModal(semestre)}
+                          className="text-center cursor-pointer bg-[#dff5c5] p-4 rounded-xl shadow hover:shadow-md transition"
+                      >
+                        <h3 className="text-cyan-800 font-extrabold text-xl">{semestre}</h3>
+                        <p className="text-gray-700 text-sm">Horas acumuladas:{<span
+                            className={`font-monospace`}> {horas}h
+                        </span>}</p>
+
+                      </div>
+                  ))
               )}
             </div>
           </section>
 
           {selectedSemester && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="fixed inset-0 bg-cyan-950/30 transition-opacity flex justify-center items-center z-50">
               <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-xl relative">
                 <h3 className="text-lg font-bold text-cyan-800 mb-2">Atividades de {selectedSemester}</h3>
-                <ul className="max-h-64 overflow-y-auto space-y-2">
+                <ul className="  text-black max-h-64 overflow-y-auto space-y-2">
                   {filteredActivities.length === 0 ? (
                     <p className="text-gray-500">Nenhuma atividade encontrada para este semestre.</p>
                   ) : (
                     filteredActivities.map((activity, index) => (
-                      <li key={index} className="border p-3 rounded bg-gray-50">
+                      <li key={index} className="border p-3 rounded bg-[#EDEDED]">
                         <p><strong>Atividade:</strong> {activity.atividadeRealizada}</p>
                         <p><strong>Categoria:</strong> {activity.categoriaAtividade}</p>
                         <p><strong>Carga Horária:</strong> {activity.cargaHoraria}h</p>
@@ -168,13 +186,29 @@ setSelectedSemester(semestre)
                 </ul>
                 <button
                   onClick={() => setSelectedSemester(null)}
-                  className="absolute top-2 right-2 text-red-600 hover:text-red-800 text-xl"
+                  className="absolute top-3 right-3 text-red-400 hover:text-red-600 text-3xl font-bold"
                 >
-                  ×
+                  &times;
                 </button>
               </div>
             </div>
           )}
+
+          <hr className="border-1 border-cyan-700 mt-3" />
+          <h2 className="text-center text-xl font-semibold mt-3 text-cyan-700"> Total de Horas Complementares: {" "}
+            <span
+              className={ totalHoras < 150
+                  ? "text-red-600"
+                  : totalHoras >= 150 && totalHoras <= 190
+                      ? "text-yellow-500"
+                      : "text-green-600"
+              }
+            >
+              {totalHoras}h
+            </span>
+          </h2>
+
+
         </div>
       </main>
     </PrivateRoute>

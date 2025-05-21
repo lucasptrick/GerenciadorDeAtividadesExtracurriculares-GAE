@@ -14,7 +14,7 @@ export default function NewActivityPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const token = localStorage.getItem('token')
+    // const token = localStorage.getItem('token')
     try {
       await axios.post(
         'http://localhost:3000/activities',
@@ -24,9 +24,10 @@ export default function NewActivityPage() {
           hours: Number(hours),
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          withCredentials: true,
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
         }
       )
 

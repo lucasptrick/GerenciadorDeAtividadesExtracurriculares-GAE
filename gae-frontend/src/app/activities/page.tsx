@@ -39,9 +39,10 @@ export default function ActivitiesPage() {
 
   const fetchActivities = async () => {
     try {
-      const token = localStorage.getItem('token')
+      // const token = localStorage.getItem('token')
       const response = await axios.get('http://localhost:3000/activities', {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+          // headers: { Authorization: `Bearer ${token}` },
       })
       setActivities(response.data)
     } catch (error) {
@@ -51,12 +52,13 @@ export default function ActivitiesPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      const token = localStorage.getItem('token')
+      // const token = localStorage.getItem('token')
       await axios.delete(`http://localhost:3000/activities/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+          // headers: { Authorization: `Bearer ${token}` },
       })
       setIsOpen(false)
-      fetchActivities()
+      await fetchActivities()
     } catch (error) {
       console.error('Erro ao deletar atividade', error)
     }
@@ -65,22 +67,35 @@ export default function ActivitiesPage() {
   const handleUpdate = async () => {
     if (!selectedActivity) return
     try {
-      const token = localStorage.getItem('token')
+      // const token = localStorage.getItem('token')
       const { id, ...updateData } = selectedActivity
       await axios.patch(`http://localhost:3000/activities/${id}`, updateData, {
-        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+        // headers: { Authorization: `Bearer ${token}` },
       })
       setIsEditing(false)
       setIsOpen(false)
-      fetchActivities()
+      await fetchActivities()
     } catch (error) {
       console.error('Erro ao atualizar atividade', error)
     }
   }
+  const [erro, setErro] = useState('');
 
   const handleChange = (field: keyof Activity, value: string | number) => {
     if (selectedActivity) {
+        // Validação apenas para semestre
+        if (field === 'semestre') {
+          const valido = /^\d{4}\.[12]$/.test(value.toString())
+          if (!valido) {
+            setErro('Formato inválido. Use o formato "2024.1" ou "2024.2"')
+          } else {
+            setErro('')
+          }
+        }
+
       setSelectedActivity({ ...selectedActivity, [field]: value })
+
     }
   }
 
@@ -90,17 +105,21 @@ export default function ActivitiesPage() {
 
   const handleCreate = async () => {
     try {
-        const token = localStorage.getItem('token');
+        // const token = localStorage.getItem('token');
         
         // Converta semestre para número
         const updatedActivity = {
         ...newActivity,
-        semestre: parseInt(newActivity.semestre.toString()),  // Converte para número
         };
 
         const response = await axios.post('http://localhost:3000/activities', updatedActivity, {
-        headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
+            // headers: { Authorization: `Bearer ${token}` },
         });
+
+        if (response.status === 201) {
+            console.log('Atividade criada com sucesso:', response.data);
+        }
 
         setIsCreating(false);
         setNewActivity({
@@ -110,7 +129,9 @@ export default function ActivitiesPage() {
         semestre: "2024.1", // Deixe o valor inicial como número
         certificadoURL: '',
         });
-        fetchActivities();
+
+        await fetchActivities();
+
     } catch (error) {
         console.error('Erro ao criar atividade', error);
     }
@@ -279,7 +300,7 @@ export default function ActivitiesPage() {
             {/* Botão de Fechar DENTRO do painel do modal */}
             <button
                 onClick={() => setIsOpen(false)}
-                className="absolute top-3 right-3 text-red-300 hover:text-red-600 text-3xl font-bold"
+                className="absolute top-3 right-3 text-red-400 hover:text-red-600 text-3xl font-bold"
                 aria-label="Fechar"
                 >
                 &times;
@@ -291,7 +312,7 @@ export default function ActivitiesPage() {
 
               {selectedActivity && (
                 <div className="space-y-2 text-black">
-                  <p><strong>ID:</strong> {selectedActivity.id}</p>
+                  {/*<p><strong>ID:</strong> {selectedActivity.id}</p>*/}
 
                   <label className="block">
                     <span className="text-sm font-medium">Atividade Realizada</span>
@@ -335,14 +356,13 @@ export default function ActivitiesPage() {
                   <label className="block">
                     <span className="text-sm font-medium">Semestre</span>
                     <input
-                      type="number"
+                      type="text"
                       className="w-full p-2 border rounded"
                       disabled={!isEditing}
-                      value={selectedActivity.semestre}
-                      onChange={(e) =>
-                        handleChange('semestre', Number(e.target.value))
-                      }
+                      value={selectedActivity.semestre || ''}
+                      onChange={(e) => handleChange('semestre', e.target.value)}
                       />
+                      {erro && <p className="text-red-600 text-sm">{erro}</p>}
                   </label>
 
                   <label className="block">

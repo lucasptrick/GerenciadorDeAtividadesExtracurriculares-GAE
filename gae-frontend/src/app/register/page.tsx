@@ -3,30 +3,36 @@
 import Link from "next/link"
 import Image from "next/image"
 import toast from "react-hot-toast"
-import { BiLogIn } from "react-icons/bi"
 import { useState } from "react"
-import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/AuthContext"
 
-export default function LoginPage() {
-  const { login } = useAuth()
+export default function RegisterPage() {
   const router = useRouter()
+  const { register } = useAuth()
 
+  const [nome, setNome] = useState("")
+  const [matricula, setMatricula] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
-    const success = await login({ email, password })
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem")
+      return
+    }
+
+    const success = await register({ nome, matricula, email, password })
     if (success) {
-      toast.success("Login realizado com sucesso!")
-      router.push("/dashboard") 
+      toast.success("Cadastro realizado com sucesso!")
+      router.push("/login")
     } else {
-      toast.error("Credenciais inválidas!")
-      // setError("E-mail ou senha inválidos")
+      toast.error("Erro ao realizar cadastro")
     }
   }
 
@@ -51,6 +57,36 @@ export default function LoginPage() {
 
           <article className="w-full">
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="nome" className="block text-sm font-medium text-gray-700">
+                  Nome completo
+                </label>
+                <input
+                  type="text"
+                  id="nome"
+                  name="nome"
+                  required
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-gray-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="matricula" className="block text-sm font-medium text-gray-700">
+                  Matrícula
+                </label>
+                <input
+                  type="text"
+                  id="matricula"
+                  name="matricula"
+                  required
+                  value={matricula}
+                  onChange={(e) => setMatricula(e.target.value)}
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-gray-500"
+                />
+              </div>
+
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   E-mail
@@ -81,27 +117,38 @@ export default function LoginPage() {
                 />
               </div>
 
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                  Confirme a senha
+                </label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-gray-500"
+                />
+              </div>
+
               {error && (
                 <p className="text-red-600 text-sm text-center">{error}</p>
               )}
-
-              <div className="flex items-center justify-between">
-
-                {/*<a href="#" className="text-sm text-cyan-600 hover:underline">*/}
-                {/*  Esqueci minha senha*/}
-                {/*</a>*/}
-
-                <a href="/register" className="text-sm text-cyan-600 hover:font-semibold">
-                  Não tenho cadastro
-                </a>
-              </div>
 
               <button
                 type="submit"
                 className="mt-4 w-full bg-cyan-600 hover:bg-cyan-800 text-white font-semibold py-2 px-4 rounded-md transition duration-300"
               >
-                <i className="bi bi-box-arrow-in-right"></i> Entrar
+                Cadastrar
               </button>
+
+              <p className="mt-4 text-center text-gray-600">
+                Já tem conta?{" "}
+                <Link href="/login" className="text-cyan-600 hover:underline">
+                  Faça login
+                </Link>
+              </p>
             </form>
           </article>
         </section>

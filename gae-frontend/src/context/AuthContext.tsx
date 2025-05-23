@@ -4,6 +4,12 @@ import React, { createContext, useState, useContext } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
 
+// 🔗 Centralizando a API
+const api = axios.create({
+  baseURL: 'http://localhost:3000',
+  withCredentials: true,
+})
+
 interface AuthUser {
   sub: string
   nome: string
@@ -29,35 +35,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null)
   const router = useRouter()
 
-
   const login = async ({ email, password }: { email: string; password: string }) => {
     try {
-      await axios.post(
-          'http://localhost:3000/login',
-          {email, password},
-          {withCredentials: true}
-      )
+      await api.post('/login', { email, password })
 
-      const response = await axios.get('http://localhost:3000/me', {
-        withCredentials: true,
-      })
-
+      const response = await api.get('/me')
       setUser(response.data)
+
+      router.push('/dashboard') // Redireciona após login, se desejar
       return true
     } catch (err) {
-      console.error('Erro ao fazer login:',err)
+      console.error('Erro ao fazer login:', err)
       return false
     }
   }
 
   const register = async (data: { nome: string; matricula: string; email: string; password: string }) => {
     try {
-      await axios.post(
-        'http://localhost:3000/register',
-        data,
-        { withCredentials: true }
-      )
-      console.log(data)
+      await api.post('/register', data)
+
+      const response = await api.get('/me')
+      setUser(response.data)
+
+      router.push('/dashboard') // Redireciona após cadastro, se desejar
       return true
     } catch (err) {
       console.error('Erro ao fazer cadastro:', err)
@@ -66,16 +66,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const logout = async () => {
-  try {
-    await axios.post('http://localhost:3000/logout', {}, { withCredentials: true });
-    localStorage.removeItem('token'); // opcional se usar só cookie
-    setUser(null);
-    router.push('/login');
-  } catch (error) {
-    console.error('Erro ao fazer logout:', error);
+    try {
+      await api.post('/logout')
+      setUser(null)
+      router.push('/login')
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error)
+    }
   }
-};
-
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout }}>
